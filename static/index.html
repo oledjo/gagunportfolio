@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Dashboard - IntelliInvest Sync</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Portfolio Dashboard</h1>
+            <p class="subtitle">IntelliInvest Portfolio Sync</p>
+        </header>
+
+        <!-- Statistics Section -->
+        <section class="stats-section">
+            <h2>Portfolio Statistics</h2>
+            <div id="stats-loading" class="loading">Loading statistics...</div>
+            <div id="stats-content" class="stats-grid" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-label">Total Holdings</div>
+                    <div class="stat-value" id="stat-total-holdings">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Invested Value</div>
+                    <div class="stat-value" id="stat-invested">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value" id="stat-current">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total P&L</div>
+                    <div class="stat-value" id="stat-pnl-value">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total P&L %</div>
+                    <div class="stat-value" id="stat-pnl-pct">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Last Sync</div>
+                    <div class="stat-value" id="stat-last-sync">-</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breakdown Section -->
+        <section class="breakdown-section">
+            <div class="breakdown-with-chart">
+                <div class="breakdown-card">
+                    <h3>By Asset Value</h3>
+                    <div id="breakdown-asset-type" class="breakdown-list"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>By Asset Value</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-asset-type"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sync Section -->
+        <section class="sync-section">
+            <h2>Sync Portfolio</h2>
+            <div class="sync-controls">
+                <!-- Excel File Upload -->
+                <div class="sync-upload-group">
+                    <label for="file-input" class="file-input-label">
+                        <input type="file" id="file-input" accept=".xlsx,.xls" style="display: none;">
+                        <span class="file-input-button">📁 Choose Excel File</span>
+                        <span id="file-name" class="file-name">No file chosen</span>
+                    </label>
+                    <button id="btn-sync-excel" class="btn-primary" disabled>📤 Upload & Sync Excel</button>
+                </div>
+                
+                <!-- Public URL Sync -->
+                <div class="sync-input-group">
+                    <input type="text" id="sync-url" placeholder="https://intelinvest.ru/public-portfolio/757008/" class="filter-input" value="https://intelinvest.ru/public-portfolio/757008/">
+                    <button id="btn-sync-public" class="btn-primary">📥 Sync from Public URL</button>
+                </div>
+                <div id="sync-status" class="sync-status" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Batch News Analysis Section -->
+        <section class="batch-analysis-section">
+            <h2>Batch News Analysis</h2>
+            <div class="batch-controls">
+                <button id="btn-start-batch" class="btn-primary">🚀 Start Batch Analysis</button>
+                <div id="batch-progress-container" class="batch-progress-container" style="display: none;">
+                    <div class="batch-progress-wrapper">
+                        <div class="batch-progress-info">
+                            <span id="batch-status-text">Processing...</span>
+                            <span id="batch-progress-text">0%</span>
+                        </div>
+                        <div class="batch-progress-bar">
+                            <div id="batch-progress-fill" class="batch-progress-fill"></div>
+                        </div>
+                        <div class="batch-stats">
+                            <span>Total: <strong id="batch-total">0</strong></span>
+                            <span>Processed: <strong id="batch-processed">0</strong></span>
+                            <span>Success: <strong id="batch-success">0</strong></span>
+                            <span>Failed: <strong id="batch-failed">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Recommendations Section -->
+        <section class="recommendations-section">
+            <h2>AI Portfolio Recommendations</h2>
+            <button id="btn-get-recommendations" class="btn-primary">🤖 Get AI Recommendations</button>
+            <div id="recommendations-loading" class="loading" style="display: none;">Analyzing portfolio and generating recommendations...</div>
+            <div id="recommendations-content" class="recommendations-content" style="display: none;"></div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <h2>Holdings</h2>
+            <div class="filters">
+                <input type="text" id="filter-ticker" placeholder="Search by ticker..." class="filter-input">
+                <select id="filter-asset-type" class="filter-select">
+                    <option value="">All Asset Types</option>
+                    <option value="stock">Stock</option>
+                    <option value="bond">Bond</option>
+                    <option value="asset">Asset</option>
+                    <option value="crypto">Crypto</option>
+                    <option value="cash">Cash</option>
+                </select>
+                <select id="filter-currency" class="filter-select">
+                    <option value="">All Currencies</option>
+                    <option value="RUB">RUB</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="filter-hide-zero" checked>
+                    <span>Hide zero balances</span>
+                </label>
+                <button id="btn-refresh" class="btn-primary">🔄 Refresh</button>
+            </div>
+        </section>
+
+        <!-- Holdings Table -->
+        <section class="holdings-section">
+            <div id="holdings-loading" class="loading">Loading holdings...</div>
+            <div id="holdings-content" style="display: none;">
+                <div class="table-container">
+                    <table class="holdings-table">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Currency</th>
+                                <th>Quantity</th>
+                                <th>Avg Price</th>
+                                <th>Invested</th>
+                                <th>Current</th>
+                                <th>P&L</th>
+                                <th>P&L %</th>
+                                <th>Share %</th>
+                                <th>Sentiment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="holdings-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="btn-prev" class="btn-secondary" disabled>← Previous</button>
+                    <span id="pagination-info">Page 1</span>
+                    <button id="btn-next" class="btn-secondary">Next →</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/js/app.js?v=41"></script>
+</body>
+</html>
+

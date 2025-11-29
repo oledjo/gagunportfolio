@@ -1,0 +1,14 @@
+pandas
+openpyxl
+sqlalchemy
+sqlmodel
+fastapi
+uvicorn[standard]
+python-multipart
+beautifulsoup4
+requests
+lxml
+httpx
+feedparser
+python-dotenv
+
