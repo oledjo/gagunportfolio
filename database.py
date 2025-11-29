@@ -1,9 +1,12 @@
 from sqlalchemy import create_engine
 from sqlmodel import Session, SQLModel
 from typing import Generator
+import os
 
-# SQLite database file
-DATABASE_URL = "sqlite:///portfolio.db"
+# SQLite database file - use environment variable for production
+# Default to portfolio.db in current directory for local development
+db_path = os.getenv("DATABASE_PATH", "portfolio.db")
+DATABASE_URL = f"sqlite:///{db_path}"
 
 # Create engine
 engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
