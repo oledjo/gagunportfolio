@@ -377,6 +377,8 @@ async def get_portfolio_recommendations():
     """
     OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
     OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+    # Use free model by default, can be overridden with OPENROUTER_MODEL env var
+    OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.2-3b-instruct:free")
     
     if not OPENROUTER_API_KEY:
         raise HTTPException(
@@ -496,7 +498,7 @@ Format your response in clear, concise bullet points. Be specific and actionable
                         "X-Title": "Portfolio Advisor"
                     },
                     json={
-                        "model": "openai/gpt-4o-mini",
+                        "model": OPENROUTER_MODEL,
                         "messages": [
                             {
                                 "role": "system",
@@ -627,6 +629,8 @@ async def analyze_stock_news(ticker: str):
     """
     OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
     OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+    # Use free model by default, can be overridden with OPENROUTER_MODEL env var
+    OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.2-3b-instruct:free")
     
     if not OPENROUTER_API_KEY:
         raise HTTPException(
@@ -713,7 +717,7 @@ Format your response in clear markdown with headings and bullet points. Be speci
                         "X-Title": "Stock News Analyzer"
                     },
                     json={
-                        "model": "openai/gpt-4o-mini",
+                        "model": OPENROUTER_MODEL,
                         "messages": [
                             {
                                 "role": "system",
@@ -815,6 +819,8 @@ async def analyze_holding_news(holding: Holding, batch_job_id: int):
     """Analyze news for a single holding and save to database"""
     OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
     OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+    # Use free model by default, can be overridden with OPENROUTER_MODEL env var
+    OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.2-3b-instruct:free")
     
     if not OPENROUTER_API_KEY:
         error_msg = "OPENROUTER_API_KEY environment variable is not set"
@@ -915,7 +921,7 @@ Format your response in clear markdown with headings and bullet points. Be speci
                         "X-Title": "Stock News Analyzer"
                     },
                     json={
-                        "model": "openai/gpt-4o-mini",
+                        "model": OPENROUTER_MODEL,
                         "messages": [
                             {
                                 "role": "system",

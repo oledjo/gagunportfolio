@@ -235,7 +235,12 @@ After deploying, verify:
 
 Always set these in your hosting platform:
 - `OPENROUTER_API_KEY`: Your OpenRouter API key (required)
+- `OPENROUTER_MODEL`: Optional, defaults to `meta-llama/llama-3.2-3b-instruct:free` (free model)
+  - Other free options: `google/gemini-flash-1.5:free`, `microsoft/phi-3-mini-128k-instruct:free`
+  - Paid options: `openai/gpt-4o-mini`, `anthropic/claude-3-haiku`, etc.
 - `DATABASE_PATH`: Optional, defaults to `portfolio.db`
+
+**Note**: The app uses a **free AI model by default** (`meta-llama/llama-3.2-3b-instruct:free`). Free models have rate limits (50 requests/day, or 1000/day if you add $10 credit). You can upgrade to a paid model by setting `OPENROUTER_MODEL`.
 
 ### CORS (if needed)
 
